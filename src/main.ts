@@ -1,11 +1,13 @@
 import sourceMapSupport from 'source-map-support';
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { resolve } from 'path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
+import { resolve, isAbsolute } from 'path';
 import { program } from 'commander'; 
+import copy from 'recursive-copy';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
-import { getProjectDir, parseProject, Project, stringifyProject } from './project';
+import { getProjectDir, parseProject, Project, replacePlaceholder, stringifyProject } from './project';
 import { ask } from './helpers';
+import { projectFileName } from './constants';
 
 sourceMapSupport.install();
 
@@ -92,11 +94,66 @@ program
         version: projectVersion,
         description: projectDescription,
       },
-      placeholders: [],
+      placeholder: [],
     };
 
     mkdirSync(dir, { recursive: true });
-    writeFileSync(resolve(dir, 'treatise.yaml'), stringifyProject(project), 'utf8');
+    writeFileSync(resolve(dir, projectFileName), stringifyProject(project), 'utf8');
+  });
+
+program
+  .command('create <template>')
+  .description('Create a new project from a template')
+  .action(async (template: string) => {
+    const dir = getProjectDir(isAbsolute(template) ? template : resolve(process.cwd(), template));
+    const project = parseProject(dir);
+
+    const creationDir = await ask({
+      type: 'input',
+      name: 'creationDir',
+      message: 'Creation directory',
+      validate: (input: string) => {
+        if (!input) {
+          return 'Creation directory cannot be empty';
+        }
+
+        const { errors } = validatePackageName(input);
+        if (errors) {
+          return errors.join(', ');
+        }
+
+        return existsSync(resolve(process.cwd(), input)) ? 'Directory already exists' : true;
+      },
+    });
+
+    console.log(`Copying folder and removing ${projectFileName} file...`);
+
+    const res = await copy(dir, resolve(process.cwd(), creationDir));
+    console.log(`Copied ${res.length} files, now removing ${projectFileName} file...`);
+    rmSync(resolve(process.cwd(), creationDir, projectFileName));
+    console.log(`Removed ${projectFileName} file. Done copying.`);
+
+    const placeholders = [];
+
+    for (const placeholder of project.placeholder) {
+      const value = await ask({
+        type: 'input',
+        name: 'value',
+        message: placeholder.name,
+        initial: placeholder.default,
+      });
+
+      placeholders.push({
+        name: placeholder.name,
+        value,
+      });
+    }
+
+    for (const placeholder of placeholders) {
+      replacePlaceholder(resolve(process.cwd(), creationDir), placeholder.name, placeholder.value);
+    }
+
+    console.log('Done creating project.');
   });
 
 program.parse(process.argv);
