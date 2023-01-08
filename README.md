@@ -80,3 +80,5 @@ If a user then creates a project from this template, using `hello` and `world` a
 ```
 
 Note that `treatise.toml` is auto-deleted. The contents of the files would look similar.
+
+`treatise.toml` has different syntax than was shown in the example, due to how to the TOML parser constructs from a schema, but you can use either syntax. I.e, you can use either `[[placeholder]]` or `placeholder = []` in the TOML file.

@@ -1,6 +1,6 @@
 {
   "name": "treatise",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Easy project generation and templating",
   "bin": {
     "treatise": "dist/main.js"
