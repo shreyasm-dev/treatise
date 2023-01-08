@@ -50,7 +50,7 @@ export const parseProject = (dir: string): Project => {
     error(`Invalid semver string: ${project.template.version}`);
   }
 
-  for (const placeholder of project.placeholders) {
+  for (const placeholder of project.placeholder) {
     const { errors: placeholderErrors } = validatePackageName(placeholder.name);
     if (placeholderErrors) {
       error(`Invalid placeholder name: ${placeholderErrors.join(', ')}`);
@@ -82,7 +82,7 @@ export interface Project {
     description: string;
     version: string;
   };
-  placeholders: Placeholder[];
+  placeholder: Placeholder[];
 }
 
 export interface Placeholder {
