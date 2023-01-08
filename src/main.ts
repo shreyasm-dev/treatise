@@ -105,10 +105,46 @@ program
   });
 
 program
-  .command('create <template>')
+  .command('create')
   .alias('c')
   .description('Create a new project from a template')
-  .action(async (template: string) => {
+  .action(async () => {
+    let isAlias = false;
+    let template = await ask({
+      type: 'input',
+      name: 'template',
+      message: 'Template path (prefix with # to use an alias)',
+      validate: (input: string) => {
+        if (!input) {
+          return 'Template path cannot be empty';
+        }
+
+        if (input.startsWith('#')) {
+          const alias = input.slice(1);
+          isAlias = true;
+          if (!config.has(alias)) {
+            error(`Alias ${alias} does not exist`);
+          }
+
+          return true;
+        }
+
+        if (!existsSync(resolve(process.cwd(), input))) {
+          return 'Template path does not exist';
+        }
+
+        return true;
+      },
+    });
+
+    if (isAlias) {
+      const alias = template.slice(1);
+      template = config.get(alias);
+      if (!template) {
+        error(`Alias ${alias} does not exist`);
+      }
+    }
+
     const dir = getProjectDir(isAbsolute(template) ? template : resolve(process.cwd(), template));
     const project = parseProject(dir);
 
