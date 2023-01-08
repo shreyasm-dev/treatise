@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'fs';
+import { readdirSync, readFileSync, renameSync, writeFileSync } from 'fs';
 import { resolve, normalize } from 'path';
 import { JsonMap, parse, stringify } from '@iarna/toml';
 import semver from 'semver';
@@ -61,6 +61,20 @@ export const parseProject = (dir: string): Project => {
 };
 
 export const stringifyProject = (project: Project): string => stringify(project as unknown as JsonMap);
+
+export const replacePlaceholder = (dir: string, placeholder: string, value: string): void => {
+  readdirSync(dir, { withFileTypes: true }).forEach((dirent) => {
+    const path = resolve(dir, dirent.name);
+    if (dirent.isDirectory()) {
+      replacePlaceholder(path, placeholder, value);
+    } else {
+      const content = readFileSync(path, 'utf8');
+      writeFileSync(path, content.replace(new RegExp(`{{${placeholder}}}`, 'g'), value));
+    }
+
+    renameSync(path, resolve(dir, dirent.name.replace(new RegExp(`{{${placeholder}}}`, 'g'), value)));
+  });
+};
 
 export interface Project {
   template: {
