@@ -6,7 +6,6 @@ import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
 import { getProjectDir, parseProject, Project, stringifyProject } from './project';
 import { ask } from './helpers';
-import { parse } from '@iarna/toml';
 
 sourceMapSupport.install();
 
