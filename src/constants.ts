@@ -1,1 +1,1 @@
-export const projectFileName = 'treatise.yaml';
+export const projectFileName = 'treatise.toml';
