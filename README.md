@@ -36,7 +36,11 @@ In template folders, you can enclose things in `{{ }}` to substitute it for a pl
 [template]
 name = "My Template"
 description = "A template for my projects"
-version = 1.0.0
+version = "1.0.0"
+
+[delimiter]
+start = "{{"
+end = "}}"
 
 [[placeholder]]
 name = "x"
@@ -82,3 +86,5 @@ If a user then creates a project from this template, using `hello` and `world` a
 Note that `treatise.toml` is auto-deleted. The contents of the files would look similar.
 
 `treatise.toml` has different syntax than was shown in the example, due to how to the TOML parser constructs from a schema, but you can use either syntax. I.e, you can use either `[[placeholder]]` or `placeholder = []` in the TOML file.
+
+You can also change the delimiter by changing the `delimiter` section in `treatise.toml`. The default delimiter is `{{ }}`.

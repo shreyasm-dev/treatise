@@ -4,7 +4,7 @@ import { JsonMap, parse, stringify } from '@iarna/toml';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
 import { projectFileName } from './constants';
-import { error } from './helpers';
+import { error, escapeRegex } from './helpers';
 
 // Project yaml file structure
 //
@@ -62,17 +62,19 @@ export const parseProject = (dir: string): Project => {
 
 export const stringifyProject = (project: Project): string => stringify(project as unknown as JsonMap);
 
-export const replacePlaceholder = (dir: string, placeholder: string, value: string): void => {
+export const replacePlaceholder = (dir: string, placeholder: string, value: string, delimiter: DelimiterPair): void => {
+  const replace = escapeRegex(`${delimiter.start}${placeholder}${delimiter.end}`);
+
   readdirSync(dir, { withFileTypes: true }).forEach((dirent) => {
     const path = resolve(dir, dirent.name);
     if (dirent.isDirectory()) {
-      replacePlaceholder(path, placeholder, value);
+      replacePlaceholder(path, placeholder, value, delimiter);
     } else {
       const content = readFileSync(path, 'utf8');
-      writeFileSync(path, content.replace(new RegExp(`{{${placeholder}}}`, 'g'), value));
+      writeFileSync(path, content.replace(new RegExp(replace, 'g'), value));
     }
 
-    renameSync(path, resolve(dir, dirent.name.replace(new RegExp(`{{${placeholder}}}`, 'g'), value)));
+    renameSync(path, resolve(dir, dirent.name.replace(new RegExp(replace, 'g'), value)));
   });
 };
 
@@ -83,10 +85,16 @@ export interface Project {
     version: string;
   };
   placeholder: Placeholder[];
+  delimiter: DelimiterPair;
 }
 
 export interface Placeholder {
   name: string;
   description: string;
   default?: string;
+}
+
+export interface DelimiterPair {
+  start: string;
+  end: string;
 }

@@ -16,3 +16,5 @@ export const error = (message: string, code = 1) => {
 export const info = (message: string) => {
   console.info(chalk.blue(message));
 };
+
+export const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

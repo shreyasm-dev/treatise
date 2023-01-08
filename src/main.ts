@@ -100,6 +100,10 @@ program
         description: projectDescription,
       },
       placeholder: [],
+      delimiter: {
+        start: '{{',
+        end: '}}',
+      },
     };
 
     mkdirSync(dir, { recursive: true });
@@ -184,7 +188,7 @@ program
       const value = await ask({
         type: 'input',
         name: 'value',
-        message: `${placeholder.name} (${placeholder.description}))`,
+        message: `${placeholder.name} (${placeholder.description})`,
         initial: placeholder.default,
       });
 
@@ -195,7 +199,7 @@ program
     }
 
     for (const placeholder of placeholders) {
-      replacePlaceholder(resolve(process.cwd(), creationDir), placeholder.name, placeholder.value);
+      replacePlaceholder(resolve(process.cwd(), creationDir), placeholder.name, placeholder.value, project.delimiter);
     }
 
     info('Done creating project.');
