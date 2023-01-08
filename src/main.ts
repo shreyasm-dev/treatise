@@ -5,13 +5,15 @@ import { program } from 'commander';
 import copy from 'recursive-copy';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
+import Conf from 'conf';
 import { getProjectDir, parseProject, Project, replacePlaceholder, stringifyProject } from './project';
-import { ask, info } from './helpers';
+import { ask, error, info } from './helpers';
 import { projectFileName } from './constants';
 
 sourceMapSupport.install();
 
 const pkg = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf8'));
+const config = new Conf();
 
 program
   .name(pkg.name)
@@ -19,7 +21,8 @@ program
   .version(pkg.version);
 
 program
-  .command('init')
+  .command('new')
+  .alias('n')
   .description('Create a new template')
   .action(async () => {
     const projectName = await ask({
@@ -103,6 +106,7 @@ program
 
 program
   .command('create <template>')
+  .alias('c')
   .description('Create a new project from a template')
   .action(async (template: string) => {
     const dir = getProjectDir(isAbsolute(template) ? template : resolve(process.cwd(), template));
@@ -154,6 +158,50 @@ program
     }
 
     info('Done creating project.');
+  });
+
+const alias = program
+  .command('alias <name> <path>')
+  .alias('a')
+  .description('Create an alias for a template')
+  .action((name: string, path: string) => {
+    const { errors } = validatePackageName(name);
+    if (errors) {
+      throw new Error(errors.join(', '));
+    }
+
+    const dir = getProjectDir(isAbsolute(path) ? path : resolve(process.cwd(), path));
+    parseProject(dir);
+
+    config.set(name, dir);
+  });
+
+alias
+  .command('unset <name>')
+  .alias('rm')
+  .description('Remove an alias')
+  .action((name: string) => {
+    if (!config.has(name)) {
+      error(`Alias ${name} does not exist`);
+    }
+
+    config.delete(name);
+  });
+
+alias
+  .command('list')
+  .alias('ls')
+  .description('List all aliases')
+  .action(() => {
+    const aliases = config.store;
+
+    if (Object.keys(aliases).length === 0) {
+      info('No aliases found');
+    }
+
+    for (const a of Object.keys(aliases)) {
+      info(`${a} -> ${aliases[a]}`);
+    }
   });
 
 program.parse(process.argv);
