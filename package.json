@@ -1,8 +1,10 @@
 {
   "name": "treatise",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Easy project generation and templating",
-  "main": "dist/main.js",
+  "bin": {
+    "treatise": "dist/main.js"
+  },
   "scripts": {
     "build": "tsc",
     "run": "node dist/main.js",
