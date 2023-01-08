@@ -4,6 +4,7 @@ import { parse, stringify } from 'yaml';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
 import { projectFileName } from './constants';
+import { error } from './helpers';
 
 // Project yaml file structure
 //
@@ -25,8 +26,8 @@ export const getProjectDir = (dir: string): string => {
     if (readdirSync(dir).includes(projectFileName)) {
       return dir;
     }
-
-    throw new Error(`No ${projectFileName} file found`);
+    
+    error(`No ${projectFileName} file found`);
   }
 
   const files = readdirSync(dir);
@@ -42,17 +43,17 @@ export const parseProject = (dir: string): Project => {
 
   const { errors } = validatePackageName(project.template.name);
   if (errors) {
-    throw new Error(`Invalid project name: ${errors.join(', ')}`);
+    error(`Invalid project name: ${errors.join(', ')}`);
   }
 
   if (!semver.valid(project.template.version)) {
-    throw new Error(`Invalid semver string: ${project.template.version}`);
+    error(`Invalid semver string: ${project.template.version}`);
   }
 
   for (const placeholder of project.placeholders) {
     const { errors: placeholderErrors } = validatePackageName(placeholder.name);
     if (placeholderErrors) {
-      throw new Error(`Invalid placeholder name: ${placeholderErrors.join(', ')}`);
+      error(`Invalid placeholder name: ${placeholderErrors.join(', ')}`);
     }
   }
 
