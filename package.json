@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@types/node": "^18.11.18",
+    "@types/semver": "^7.3.13",
     "commander": "^9.5.0",
     "semver": "^7.3.8",
     "source-map-support": "^0.5.21",
