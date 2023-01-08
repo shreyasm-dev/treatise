@@ -1,6 +1,6 @@
 {
   "name": "treatise",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easy project generation and templating",
   "main": "dist/main.js",
   "scripts": {
