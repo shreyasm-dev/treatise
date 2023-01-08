@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'fs';
 import { resolve, normalize } from 'path';
-import { parse, stringify } from 'yaml';
+import { JsonMap, parse, stringify } from '@iarna/toml';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
 import { projectFileName } from './constants';
@@ -39,7 +39,7 @@ export const getProjectDir = (dir: string): string => {
 };
 
 export const parseProject = (dir: string): Project => {
-  const project = parse(readFileSync(resolve(dir, projectFileName), 'utf8')) as Project;
+  const project = parse(readFileSync(resolve(dir, projectFileName), 'utf8')) as unknown as Project;
 
   const { errors } = validatePackageName(project.template.name);
   if (errors) {
@@ -60,7 +60,7 @@ export const parseProject = (dir: string): Project => {
   return project;
 };
 
-export const stringifyProject = (project: Project): string => stringify(project);
+export const stringifyProject = (project: Project): string => stringify(project as unknown as JsonMap);
 
 export interface Project {
   template: {
