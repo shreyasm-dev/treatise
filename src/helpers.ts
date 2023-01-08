@@ -12,3 +12,7 @@ export const error = (message: string, code = 1) => {
   console.error(chalk.red.bold(message));
   process.exit(code);
 };
+
+export const info = (message: string) => {
+  console.info(chalk.blue(message));
+};

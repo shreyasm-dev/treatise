@@ -6,7 +6,7 @@ import copy from 'recursive-copy';
 import semver from 'semver';
 import validatePackageName from 'validate-npm-package-name';
 import { getProjectDir, parseProject, Project, replacePlaceholder, stringifyProject } from './project';
-import { ask } from './helpers';
+import { ask, info } from './helpers';
 import { projectFileName } from './constants';
 
 sourceMapSupport.install();
@@ -44,7 +44,7 @@ program
 
     const exists = existsSync(resolve(process.cwd(), projectName));
     if (exists) {
-      console.log(`Directory ${projectName} already exists`);
+      info(`Directory ${projectName} already exists`);
 
       const newDirName = await ask({
         type: 'input',
@@ -126,12 +126,12 @@ program
       },
     });
 
-    console.log(`Copying folder and removing ${projectFileName} file...`);
+    info(`Copying folder and removing ${projectFileName} file...`);
 
     const res = await copy(dir, resolve(process.cwd(), creationDir));
-    console.log(`Copied ${res.length} files, now removing ${projectFileName} file...`);
+    info(`Copied ${res.length} files, now removing ${projectFileName} file...`);
     rmSync(resolve(process.cwd(), creationDir, projectFileName));
-    console.log(`Removed ${projectFileName} file. Done copying.`);
+    info(`Removed ${projectFileName} file. Done copying.`);
 
     const placeholders = [];
 
@@ -153,7 +153,7 @@ program
       replacePlaceholder(resolve(process.cwd(), creationDir), placeholder.name, placeholder.value);
     }
 
-    console.log('Done creating project.');
+    info('Done creating project.');
   });
 
 program.parse(process.argv);
