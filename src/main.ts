@@ -177,7 +177,7 @@ program
 
     info(`Copying folder and removing ${projectFileName} file...`);
 
-    const res = await copy(dir, resolve(process.cwd(), creationDir));
+    const res = await copy(dir, resolve(process.cwd(), creationDir), { dot: true });
     info(`Copied ${res.length} files, now removing ${projectFileName} file...`);
     rmSync(resolve(process.cwd(), creationDir, projectFileName));
     info(`Removed ${projectFileName} file. Done copying.`);
