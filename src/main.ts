@@ -104,6 +104,9 @@ program
 
     mkdirSync(dir, { recursive: true });
     writeFileSync(resolve(dir, projectFileName), stringifyProject(project), 'utf8');
+
+    info(`Created ${projectName} template in ${dir}`);
+    info(`Create placeholders in ${projectFileName} and use {{placeholderName}} in files or file/folder names for substitution`);
   });
 
 program
@@ -181,7 +184,7 @@ program
       const value = await ask({
         type: 'input',
         name: 'value',
-        message: placeholder.name,
+        message: `${placeholder.name} (${placeholder.description}))`,
         initial: placeholder.default,
       });
 
