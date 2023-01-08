@@ -188,7 +188,7 @@ program
       const value = await ask({
         type: 'input',
         name: 'value',
-        message: `${placeholder.name} (${placeholder.description})`,
+        message: `${placeholder.name}${placeholder.description === '' ? '' : ` (${placeholder.description})`}`,
         initial: placeholder.default,
       });
 
