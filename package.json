@@ -29,9 +29,11 @@
   "dependencies": {
     "@types/node": "^18.11.18",
     "@types/semver": "^7.3.13",
+    "@types/validate-npm-package-name": "^4.0.0",
     "commander": "^9.5.0",
     "semver": "^7.3.8",
     "source-map-support": "^0.5.21",
+    "validate-npm-package-name": "^5.0.0",
     "yaml": "^2.2.1"
   }
 }
