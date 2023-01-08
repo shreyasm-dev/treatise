@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import sourceMapSupport from 'source-map-support';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
 import { resolve, isAbsolute } from 'path';
