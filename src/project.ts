@@ -74,5 +74,5 @@ export interface Project {
 export interface Placeholder {
   name: string;
   description: string;
-  default: string;
+  default?: string;
 }
